@@ -667,7 +667,7 @@ def main():
     # download the dataset.
 
     if data_args.task_name in GLUE_TASKS:
-        raw_datasets = load_dataset("glue", data_args.task_name)
+        raw_datasets = load_dataset("glue", data_args.task_name, revision='script')
     else:
         raw_datasets = load_dataset(data_args.task_name)
 

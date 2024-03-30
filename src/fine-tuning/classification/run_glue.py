@@ -316,6 +316,7 @@ def main():
                 data_args.task_name,
                 cache_dir=model_args.cache_dir,
                 use_auth_token=True if model_args.use_auth_token else None,
+                revision='script',
             )
     elif data_args.dataset_name is not None:
         # Downloading and loading a dataset from the hub.

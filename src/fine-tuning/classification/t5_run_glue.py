@@ -373,7 +373,7 @@ def main():
     #         "You're running a t5 model but didn't provide a source prefix, will use from pre-stored ones"
     #     )
     args.source_prefix = t5_task_prefix[args.task_name]
-    
+
     # Make one log on every process with the configuration for debugging.
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -410,7 +410,7 @@ def main():
             os.makedirs(args.output_dir, exist_ok=True)
     accelerator.wait_for_everyone()
 
-    raw_datasets = load_dataset("glue", args.task_name)
+    raw_datasets = load_dataset("glue", args.task_name, revision='script')
 
     label_list = raw_datasets["train"].features["label"].names
     num_labels = len(label_list)
@@ -573,7 +573,7 @@ def main():
         # TensorBoard cannot log Enums, need the raw value
         experiment_config["lr_scheduler_type"] = experiment_config["lr_scheduler_type"].value
         accelerator.init_trackers("summarization_no_trainer", experiment_config)
-    
+
     metric = evaluate.load("glue", args.task_name)
 
     # Train!
@@ -737,7 +737,7 @@ def main():
                     repo.push_to_hub(commit_message="End of training", auto_lfs_prune=True)
             with open(os.path.join(args.output_dir, "all_results.json"), "w") as f:
                 json.dump({"eval_accuracy": eval_metric["accuracy"]}, f)
-    
+
     if args.do_eval:
         logger.info("***** Running evaluation *****")
         model.eval()
@@ -792,7 +792,7 @@ def main():
                 decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
                 decoded_preds, decoded_labels = postprocess_text(decoded_preds, decoded_labels)
-                
+
                 # decoded_preds, decoded_labels = accelerator.gather_for_metrics(decoded_preds, decoded_labels)
                 metric.add_batch(
                     predictions=decoded_preds,
